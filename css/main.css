@@ -18,7 +18,7 @@ button {
   width: 7rem;
   margin-bottom: 1rem;
   background-color: #e52165;
-  border: 1px solid #0d1137;
+  border: .0625rem solid #0d1137;
   border-radius: 0.5rem;
   cursor: pointer;
 }
@@ -26,7 +26,7 @@ button {
 button:hover {
   background-color: #0d1137;
   color: #e52165;
-  border: 1px solid #e52165;
+  border: .0625rem solid #e52165;
 }
 
 /* Gameboard section */
@@ -43,8 +43,8 @@ button:hover {
 .cell {
   height: 100%;
   width: 100%;
-  border-top: 4px solid #e52165;
-  border-left: 4px solid #e52165;
+  border-top: .25rem solid #e52165;
+  border-left: .25rem solid #e52165;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,11 +52,11 @@ button:hover {
 }
 
 .c3 {
-  border-right: 4px solid #e52165
+  border-right: .25rem solid #e52165
 }
 
 .r3 {
-  border-bottom: 4px solid #e52165;
+  border-bottom: .25rem solid #e52165;
 }
 
 .c1 .r1 {
@@ -107,6 +107,10 @@ button:hover {
 /* Footer */
 footer {
   margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 footer p {
@@ -116,6 +120,7 @@ footer p {
 footer img {
   height: 1rem;
   width: 1rem;
+  margin-top: .1875rem;
   opacity: 0.5;
 }
 
