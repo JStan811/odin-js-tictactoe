@@ -8,6 +8,27 @@ body {
   color: #e52165;
 }
 
+.hide {
+  display: none;
+}
+
+/* Header / stuff above gameboard */
+button {
+  height: 2rem;
+  width: 7rem;
+  margin-bottom: 1rem;
+  background-color: #e52165;
+  border: 1px solid #0d1137;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0d1137;
+  color: #e52165;
+  border: 1px solid #e52165;
+}
+
 /* Gameboard section */
 .grid {
   max-width: 30rem;
@@ -27,7 +48,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 3rem;
 }
 
 .c3 {
