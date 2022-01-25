@@ -14,6 +14,18 @@ const gameBoard = (() => {
   gameBoardCells.push(document.querySelector('.c2.r3'));
   gameBoardCells.push(document.querySelector('.c3.r3'));
 
+  const addAllCellPointers = () => {
+    gameBoardCells.forEach((cell) => {
+      cell.style.cursor = 'pointer';
+    })
+  }
+
+  const clearBoard = () => {
+    gameBoardCells.forEach((cell) => {
+      cell.textContent = '';
+    });
+  }
+
   const isCellAvailable = (cell) => {
     return cell.textContent === '' ? true : false;
   }
@@ -22,7 +34,7 @@ const gameBoard = (() => {
     return (((!isCellAvailable(gameBoardCells[cellIndex1])) && (!isCellAvailable(gameBoardCells[cellIndex2])) && (!isCellAvailable(gameBoardCells[cellIndex3]))) && (gameBoardCells[cellIndex1].textContent === gameBoardCells[cellIndex2].textContent && gameBoardCells[cellIndex2].textContent === gameBoardCells[cellIndex3].textContent))
   }
 
-  return {gameBoardCells, isCellAvailable, haveSameMarker};
+  return {gameBoardCells, addAllCellPointers, clearBoard, isCellAvailable, haveSameMarker};
 })();
 
 // Player object using a Factory Function
@@ -34,10 +46,15 @@ const playerFactory = (name, marker) => {
 // Game object using the Module Pattern
 
 const game = (() => {
+  //build players
   const player1 = playerFactory('Player 1', 'X');
   const player2 = playerFactory('Player 2', 'O');
   let activePlayer = player1;
 
+  //cache DOM
+  const startGameBtn = document.querySelector('.start');
+  const restartGameBtn = document.querySelector('.restart');
+  const newGameBtn = document.querySelector('.new');
   const textBox = document.querySelector('.text-box');
 
   const isWin  = () => {
@@ -76,33 +93,57 @@ const game = (() => {
   }
 
   const startGame = () => {
-    startGameBtn.style.display = 'none';
+    startGameBtn.classList.add('hide');
+    restartGameBtn.classList.remove('hide');
     textBox.textContent = `${activePlayer.name}, your turn.`
     addBoardClickEvents();
+    gameBoard.addAllCellPointers();
+  }
+
+  const restartGame = () => {
+    gameBoard.clearBoard();
+    if(activePlayer !== player1) {
+      activePlayer = player1;
+    }
+    textBox.textContent = `${activePlayer.name}, your turn.`
+    addBoardClickEvents();
+    gameBoard.addAllCellPointers();
+  }
+
+  const newGame = () => {
+    newGameBtn.classList.add('hide');
+    gameBoard.clearBoard();
+    if(activePlayer !== player1) {
+      activePlayer = player1;
+    }
+    textBox.textContent = `${activePlayer.name}, your turn.`
+    addBoardClickEvents();
+    gameBoard.addAllCellPointers();
+    restartGameBtn.classList.remove('hide');
   }
 
   const initiatePlayerTurn = (event) => {
-    if(gameBoard.isCellAvailable(event.target)) {
-      event.target.textContent = activePlayer.marker;
-      if(isWin()) {
-        textBox.textContent = `${activePlayer.name} has won. Game over.`;
-        removeBoardClickEvents();
-      }
-      else if(isTie(gameBoard.gameBoardCells)) {
-        textBox.textContent = `Tie. Game over.`;
-        removeBoardClickEvents();
-      }
-      else {
-        switchPlayers();
-        textBox.textContent = `${activePlayer.name}, your turn.`
-      }
+    event.target.textContent = activePlayer.marker;
+    event.target.removeEventListener('click', initiatePlayerTurn);
+    event.target.style.cursor = 'auto';
+    if(isWin()) {
+      textBox.textContent = `${activePlayer.name} wins. Game over.`;
+      restartGameBtn.classList.add('hide');
+      newGameBtn.classList.remove('hide');
+      removeBoardClickEvents();
+    }
+    else if(isTie(gameBoard.gameBoardCells)) {
+      textBox.textContent = `Tie. Game over.`;
+      restartGameBtn.classList.add('hide');
+      newGameBtn.classList.remove('hide');
+      removeBoardClickEvents();
     }
     else {
-      alert('Cell is unavailable');
+      switchPlayers();
+      textBox.textContent = `${activePlayer.name}, your turn.`
     }
   };
 
-  //bind events
   const addBoardClickEvents = () => {
     gameBoard.gameBoardCells.forEach((cell) => {
       cell.addEventListener("click", initiatePlayerTurn);
@@ -115,8 +156,10 @@ const game = (() => {
     });
   };
 
-  const startGameBtn = document.querySelector('button');
+  //bind events
   startGameBtn.addEventListener('click', startGame);
+  restartGameBtn.addEventListener('click', restartGame);
+  newGameBtn.addEventListener('click', newGame);
 
   return{};
 })();
