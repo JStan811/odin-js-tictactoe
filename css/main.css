@@ -4,8 +4,8 @@
 body {
   text-align: center;
   font-family: 'Raleway', sans-serif;
-  background-color: #e52165;
-  color: #0d1137;
+  background-color: #0d1137;
+  color: #e52165;
 }
 
 /* Gameboard section */
@@ -22,19 +22,19 @@ body {
 .cell {
   height: 100%;
   width: 100%;
-  border-top: 4px solid #0d1137;
-  border-left: 4px solid #0d1137;
+  border-top: 4px solid #e52165;
+  border-left: 4px solid #e52165;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .c3 {
-  border-right: 4px solid #0d1137;
+  border-right: 4px solid #e52165
 }
 
 .r3 {
-  border-bottom: 4px solid #0d1137;
+  border-bottom: 4px solid #e52165;
 }
 
 .c1 .r1 {
