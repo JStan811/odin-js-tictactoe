@@ -1,3 +1,4 @@
+/* Global Styles */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
 body {
@@ -7,6 +8,7 @@ body {
   color: #0d1137;
 }
 
+/* Gameboard section */
 .grid {
   max-width: 30rem;
   height: 30rem;
@@ -78,4 +80,23 @@ body {
 .c3 .r3 {
   grid-column: 3 / 4;
   grid-row: 3 / 4;
+}
+
+/* Footer */
+footer {
+  margin-top: 1rem;
+}
+
+footer p {
+  margin: 0;
+}
+
+footer img {
+  height: 1rem;
+  width: 1rem;
+  opacity: 0.5;
+}
+
+footer img:hover {
+  opacity: 1;
 }
