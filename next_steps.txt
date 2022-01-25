@@ -1,3 +1,5 @@
 Misc.
  - should I move placeMarker to Player?
  - clean up isTie
+ - replace markers with .png icons instead of text
+ - add color themes (use css variables or sass variables?)
