@@ -1,8 +1,6 @@
 // Gameboard object using the Module Pattern
 
 const gameBoard = (() => {
-  // let gameBoardContents = ['X','O','X','O','X','O','X','O','X'];
-  let gameBoardContents = [];
   let gameBoardCells = [];
 
   //cache DOM
@@ -16,36 +14,15 @@ const gameBoard = (() => {
   gameBoardCells.push(document.querySelector('.c2.r3'));
   gameBoardCells.push(document.querySelector('.c3.r3'));
 
-  const render = () => {
-    gameBoardCells.forEach((cell, index) => {
-      cell.textContent = gameBoardContents[index];
-    });
-  };
-
   const isCellAvailable = (cell) => {
-    return cell.textContent ? false : true;
+    return cell.textContent === '' ? true : false;
   }
 
-  const placeMarker = (event) => {
-    if(isCellAvailable(event.target)) {
-      event.target.textContent = 'X';
-      game.continueTurn();
-    }
-    else {
-      alert('Cell is unavailable');
-    }
-  };
+  const haveSameMarker = (cellIndex1, cellIndex2, cellIndex3) => {
+    return (((!isCellAvailable(gameBoardCells[cellIndex1])) && (!isCellAvailable(gameBoardCells[cellIndex2])) && (!isCellAvailable(gameBoardCells[cellIndex3]))) && (gameBoardCells[cellIndex1].textContent === gameBoardCells[cellIndex2].textContent && gameBoardCells[cellIndex2].textContent === gameBoardCells[cellIndex3].textContent))
+  }
 
-  //bind events
-  const addClickEvents = () => {
-    gameBoardCells.forEach((cell) => {
-      cell.addEventListener("click", placeMarker);
-    });
-  };
-
-  render();
-
-  return {gameBoardContents, addClickEvents};
+  return {gameBoardCells, isCellAvailable, haveSameMarker};
 })();
 
 // Player object using a Factory Function
@@ -57,43 +34,39 @@ const playerFactory = (name, marker) => {
 // Game object using the Module Pattern
 
 const game = (() => {
-  let turnWaitToggle = true;
+  const player1 = playerFactory('Player 1', 'X');
+  const player2 = playerFactory('Player 2', 'O');
+  let activePlayer = player1;
 
-  const isWin  = (gameBoardContents) => {
-    if(gameBoardContents[0] === gameBoardContents[3] && gameBoardContents[3] === gameBoardContents[6]) {
-      return true;
-    }
-    if(gameBoardContents[1] === gameBoardContents[4] && gameBoardContents[4] === gameBoardContents[7]) {
-      return true;
-    }
-    if(gameBoardContents[2] === gameBoardContents[5] && gameBoardContents[5] === gameBoardContents[8]) {
-      return true;
-    }
-    if(gameBoardContents[0] === gameBoardContents[1] && gameBoardContents[1] === gameBoardContents[2]) {
-      return true;
-    }
-    if(gameBoardContents[3] === gameBoardContents[4] && gameBoardContents[4] === gameBoardContents[5]) {
-      return true;
-    }
-    if(gameBoardContents[6] === gameBoardContents[7] && gameBoardContents[7] === gameBoardContents[8]) {
-      return true;
-    }
-    if(gameBoardContents[0] === gameBoardContents[4] && gameBoardContents[4] === gameBoardContents[8]) {
-      return true;
-    }
-    if(gameBoardContents[2] === gameBoardContents[4] && gameBoardContents[4] === gameBoardContents[6]) {
-      return true;
-    }
+  const textBox = document.querySelector('.text-box');
+
+  const isWin  = () => {
+    if(gameBoard.haveSameMarker(0,3,6)) {return true;}
+    if(gameBoard.haveSameMarker(1,4,7)) {return true;}
+    if(gameBoard.haveSameMarker(2,5,8)) {return true;}
+    if(gameBoard.haveSameMarker(0,1,2)) {return true;}
+    if(gameBoard.haveSameMarker(3,4,5)) {return true;}
+    if(gameBoard.haveSameMarker(6,7,8)) {return true;}
+    if(gameBoard.haveSameMarker(0,4,8)) {return true;}
+    if(gameBoard.haveSameMarker(2,4,6)) {return true;}
 
     return false;
   }
 
-  const isTie = (gameBoardContents) => {
-    gameBoardContents.forEach((cell) => {if(!cell.textContent) return false;});
-    if(!isWin()) return true;
+  const isTie = (gameBoardCells) => {
+    let result;
+
+    gameBoardCells.forEach((cell) => {
+      if(gameBoard.isCellAvailable(cell)) {
+        result = false;
+      }
+    });
+
+    if(result === false) {return false;}
+    if(!isWin()) {return true;}
   }
 
-  const switchPlayers = (activePlayer, player1, player2) => {
+  const switchPlayers = () => {
     if(activePlayer === player1) {
       activePlayer = player2;
     }
@@ -102,42 +75,48 @@ const game = (() => {
     }
   }
 
-  const continueTurn = () => {
-    turnWaitToggle = false;
+  const startGame = () => {
+    startGameBtn.style.display = 'none';
+    textBox.textContent = `${activePlayer.name}, your turn.`
+    addBoardClickEvents();
   }
 
-  const play = () => {
-    const player1 = playerFactory('Player 1', 'X');
-    const player2 = playerFactory('Player 2', 'O');
-
-    let activePlayer = player1;
-    
-    gameBoard.addClickEvents();
-
-    while(true) {
-      alert(`${activePlayer.name}, make your play.`);
-
-      //wait until click event (gameBoard.placeMarker) sends continueTurn
-      //confirmation
-      while(turnWaitToggle) {};
-
+  const initiatePlayerTurn = (event) => {
+    if(gameBoard.isCellAvailable(event.target)) {
+      event.target.textContent = activePlayer.marker;
       if(isWin()) {
-        alert(`${activePlayer.name}, you've won! Game over.`);
-        break;
+        textBox.textContent = `${activePlayer.name} has won. Game over.`;
+        removeBoardClickEvents();
       }
-
-      if(isTie()) {
-        alert('Tie. Game over.');
-        break;
+      else if(isTie(gameBoard.gameBoardCells)) {
+        textBox.textContent = `Tie. Game over.`;
+        removeBoardClickEvents();
       }
-
-      turnWaitToggle = true;
-      switchPlayers(activePlayer, player1, player2);
+      else {
+        switchPlayers();
+        textBox.textContent = `${activePlayer.name}, your turn.`
+      }
     }
-  }
+    else {
+      alert('Cell is unavailable');
+    }
+  };
+
+  //bind events
+  const addBoardClickEvents = () => {
+    gameBoard.gameBoardCells.forEach((cell) => {
+      cell.addEventListener("click", initiatePlayerTurn);
+    });
+  };
+
+  const removeBoardClickEvents = () => {
+    gameBoard.gameBoardCells.forEach((cell) => {
+      cell.removeEventListener("click", initiatePlayerTurn);
+    });
+  };
 
   const startGameBtn = document.querySelector('button');
-  startGameBtn.addEventListener('click', play);
+  startGameBtn.addEventListener('click', startGame);
 
-  return{continueTurn};
+  return{};
 })();

@@ -1,2 +1,3 @@
 Misc.
  - should I move placeMarker to Player?
+ - clean up isTie
